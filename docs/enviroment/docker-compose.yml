@@ -1,0 +1,48 @@
+#services:
+#  redis:
+#    image: redis
+#    ports:
+#      - 6379:6379
+#    container_name: redis
+#    restart: always
+#    networks:
+#      - lottery-network
+
+
+version: '3.8'
+
+services:
+  # Redis 服务
+  redis:
+    image: redis  # 官方镜像，轻量级Alpine版本
+    container_name: lottery-redis
+    restart: always  # 容器意外退出时自动重启
+    ports:
+      - "6379:6379"  # 端口映射：宿主机端口:容器端口
+#    volumes:
+#      - redis_data:/data  # 持久化数据卷
+    networks:
+      - lottery-network  # 自定义网络
+
+  # Redis 可视化管理工具
+  redis-commander:
+    image: rediscommander/redis-commander
+    container_name: redis-commander
+    restart: always
+    ports:
+      - "8081:8081"  # Web访问端口
+    environment:
+      - REDIS_HOSTS=local:redis:6379  # 自动连接Redis容器
+    depends_on:
+      - redis  # 确保Redis先启动
+    networks:
+      - lottery-network
+
+# 自定义网络（提升容器间通信效率）
+networks:
+  lottery-network:
+    driver: bridge
+
+# 数据卷声明（避免Redis数据丢失）
+#volumes:
+#  redis_data:

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IStrategyDAO">
+
+    <select id="queryStrategyEntityByStrategyId" resultType="com.luo.infrastructure.pojo.Strategy">
+        select strategy_id, strategy_desc, rule_models, create_time, update_time
+        from strategy
+        where strategy_id = #{strategyId}
+    </select>
+</mapper>

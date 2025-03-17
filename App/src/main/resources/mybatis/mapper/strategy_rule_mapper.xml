@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IStrategyRuleDAO">
+
+    <select id="queryStrategyRuleEntity" resultType="com.luo.infrastructure.pojo.StrategyRule">
+        select strategy_id, award_id, rule_model, rule_value, rule_desc, create_time, update_time from strategy_rule where rule_model = #{ruleWeight}
+    </select>
+    <select id="queryRuleValue" resultType="java.lang.String">
+        select rule_value from strategy_rule where strategy_id = #{strategyId} and rule_model = #{ruleModel}
+    </select>
+</mapper>
