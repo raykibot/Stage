@@ -30,4 +30,13 @@ public interface IRaffleDispatch {
      */
     Integer getRandomAwardId(String caCheKey);
 
+
+    /**
+     * 扣减库存
+     * @param strategyId
+     * @param awardId
+     * @return boolean
+     */
+    Boolean subtractStock(Long strategyId, Integer awardId);
+
 }

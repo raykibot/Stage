@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IRuleTreeDAO">
+
+    <select id="queryRuleTreeVOByTreeId" resultType="com.luo.infrastructure.pojo.RuleTree">
+        select tree_id,tree_name,tree_desc,tree_node_rule_key,create_time,update_time
+        from rule_tree where tree_id = #{treeId}
+    </select>
+</mapper>

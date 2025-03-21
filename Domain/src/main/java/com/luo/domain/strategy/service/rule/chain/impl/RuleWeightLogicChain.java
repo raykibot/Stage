@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Slf4j
-@Component
+@Component("rule_weight")
 public class RuleWeightLogicChain extends AbstractLogicChain {
 
     @Autowired
@@ -21,7 +20,7 @@ public class RuleWeightLogicChain extends AbstractLogicChain {
     @Autowired
     private IRaffleDispatch raffleDispatch;
 
-    private Long userScore = 100L;
+    private Long userScore = 0L;
 
 
     @Override

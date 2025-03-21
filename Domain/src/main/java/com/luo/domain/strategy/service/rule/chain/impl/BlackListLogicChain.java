@@ -6,11 +6,13 @@ import com.luo.domain.strategy.service.rule.chain.AbstractLogicChain;
 
 import com.luo.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import com.luo.type.constants.Commons;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("rule_blacklist")
 public class BlackListLogicChain extends AbstractLogicChain {
 
     @Autowired
@@ -21,6 +23,7 @@ public class BlackListLogicChain extends AbstractLogicChain {
         String ruleValue = strategyRepository.queryRuleValue(strategyId,ruleModel());
         String[] split1 = ruleValue.split(Commons.COLON);
         Integer awardId = Integer.valueOf(split1[0]);
+
 
         String[] split2 = split1[1].split(Commons.COMMA);
         for (String id : split2) {

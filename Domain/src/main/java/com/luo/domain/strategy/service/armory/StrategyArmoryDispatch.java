@@ -112,9 +112,6 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
 
         //5. 存入redis
         strategyRepository.setCacheAwardIds(strategyId, awardIds,awardIds.size());
-
-
-
     }
 
     // 假如最小概率为 0.0001 则返回 10000
@@ -147,5 +144,11 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
     @Override
     public Integer getRandomAwardId(String caCheKey) {
         return strategyRepository.getAwardRandomByRuleWeight(caCheKey);
+    }
+
+    @Override
+    public Boolean subtractStock(Long strategyId, Integer awardId) {
+        String caCheKey = Commons.RedisKey.STRATEGY_AWARD_COUNT_KEY+strategyId+Commons.UNDERLINE+awardId;
+        return strategyRepository.subtractStock(caCheKey);
     }
 }

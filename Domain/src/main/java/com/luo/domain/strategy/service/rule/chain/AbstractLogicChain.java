@@ -1,7 +1,7 @@
 package com.luo.domain.strategy.service.rule.chain;
 
 
-
+import org.springframework.stereotype.Service;
 
 
 public abstract class AbstractLogicChain implements ILogicChain{

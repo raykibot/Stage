@@ -12,6 +12,12 @@ public class Commons {
         public static final String STRATEGY_AWARD_COUNT_KEY = "strategy_award_count_key_";
         public static final String STRATEGY_AWARD_RATE_RANGE_KEY = "strategy_award_rate_range_key_";
         public static final String STRATEGY_AWARD_RATE_TABLE_KEY = "strategy_award_rate_table_key_";
+
+
+        public static final String STRATEGY_AWARD_KEY = "strategy_award_key_";
+
+
+        public static final String RULE_TREE_VO_KEY = "rule_tree_vo_key_";
     }
 
 }

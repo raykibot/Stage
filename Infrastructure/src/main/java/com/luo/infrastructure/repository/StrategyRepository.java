@@ -2,24 +2,20 @@ package com.luo.infrastructure.repository;
 
 
 import com.luo.domain.strategy.model.entity.StrategyAwardEntity;
+import com.luo.domain.strategy.model.entity.StrategyAwardRuleModelVO;
 import com.luo.domain.strategy.model.entity.StrategyEntity;
 import com.luo.domain.strategy.model.entity.StrategyRuleEntity;
+import com.luo.domain.strategy.model.vo.*;
 import com.luo.domain.strategy.repository.IStrategyRepository;
-import com.luo.infrastructure.dao.IStrategyAwardDAO;
-import com.luo.infrastructure.dao.IStrategyDAO;
-import com.luo.infrastructure.dao.IStrategyRuleDAO;
-import com.luo.infrastructure.pojo.Strategy;
-import com.luo.infrastructure.pojo.StrategyAward;
-import com.luo.infrastructure.pojo.StrategyRule;
+import com.luo.infrastructure.dao.*;
+import com.luo.infrastructure.pojo.*;
 import com.luo.infrastructure.redis.IRedisService;
 import com.luo.type.constants.Commons;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -37,6 +33,15 @@ public class StrategyRepository implements IStrategyRepository {
 
     @Autowired
     private IStrategyRuleDAO strategyRuleDAO;
+
+    @Autowired
+    private IRuleTreeDAO ruleTreeDAO;
+
+    @Autowired
+    IRuleTreeNodeDAO ruleTreeNodeDAO;
+
+    @Autowired
+    private IRuleTreeNodeLineDAO ruleTreeNodeLineDAO;
 
 
 
@@ -130,5 +135,128 @@ public class StrategyRepository implements IStrategyRepository {
     @Override
     public String queryRuleValue(Long strategyId, String ruleModel) {
         return strategyRuleDAO.queryRuleValue(strategyId,ruleModel);
+    }
+
+    @Override
+    public Boolean subtractStock(String caCheKey) {
+        long surplus = redisService.decr(caCheKey);
+        if (surplus < 0 ){
+            redisService.setValue(caCheKey,0);
+        }
+
+        //给奖品库存上锁
+        String lockKey = caCheKey+Commons.UNDERLINE+surplus;
+        Boolean lockStatus = redisService.setNx(lockKey);
+        if (!lockStatus){
+            log.info("上锁失败");
+        }
+        return lockStatus;
+    }
+
+    @Override
+    public StrategyAwardEntity queryStrategyAwardEntity(Integer awardId, Long strategyId) {
+
+        //优先从缓存中获取
+        String caCheKey = Commons.RedisKey.STRATEGY_AWARD_KEY+strategyId+Commons.UNDERLINE+awardId;
+        StrategyAwardEntity strategyAwardEntity = redisService.getValue(caCheKey);
+        if (strategyAwardEntity != null){
+            return strategyAwardEntity;
+        }
+
+        StrategyAward strategyAwardReq = new StrategyAward();
+        strategyAwardReq.setAwardId(awardId);
+        strategyAwardReq.setStrategyId(strategyId);
+
+        StrategyAward strategyAward = strategyAwardDAO.queryStrategyAward(strategyAwardReq);
+
+        strategyAwardEntity.setStrategyId(strategyAward.getStrategyId());
+        strategyAwardEntity.setAwardId(strategyAward.getAwardId());
+        strategyAwardEntity.setAwardTitle(strategyAward.getAwardTitle());
+        strategyAwardEntity.setAwardSubtitle(strategyAward.getAwardSubtitle());
+        strategyAwardEntity.setAwardCount(strategyAward.getAwardCount());
+        strategyAwardEntity.setAwardCountSurplus(strategyAward.getAwardCountSurplus());
+        strategyAwardEntity.setSort(strategyAward.getSort());
+        strategyAwardEntity.setAwardRate(strategyAward.getAwardRate());
+
+
+        //缓存结果
+        redisService.setValue(caCheKey,strategyAwardEntity);
+
+        return strategyAwardEntity;
+    }
+
+    @Override
+    public RuleTreeVO queryRuleTreeVOByTreeId(String treeId) {
+        //优先从缓存中获取
+        String caCheKey = Commons.RedisKey.RULE_TREE_VO_KEY+treeId;
+        RuleTreeVO value = redisService.getValue(caCheKey);
+        if (null != value){
+            return value;
+        }
+
+
+        //从数据库获取
+        RuleTree ruleTree = ruleTreeDAO.queryRuleTreeVOByTreeId(treeId);
+        List<RuleTreeNode> ruleTreeNodes = ruleTreeNodeDAO.queryRuleTreeNodeVOByTreeId(treeId);
+        List<RuleTreeNodeLine> ruleTreeNodeLines = ruleTreeNodeLineDAO.queryRuleTreeNodeLineVOByTreeId(treeId);
+
+
+        //1. 构建节点线map 节点名称对应着自己的连线集合
+        Map<String, List<RuleTreeNodeLineVO>> ruleTreeNodeLineMap = new HashMap<>();
+        for (RuleTreeNodeLine ruleTreeNodeLine : ruleTreeNodeLines) {
+            RuleTreeNodeLineVO lineVO = RuleTreeNodeLineVO.builder()
+                    .ruleNodeFrom(ruleTreeNodeLine.getRuleNodeFrom())
+                    .ruleNodeTo(ruleTreeNodeLine.getRuleNodeTo())
+                    .ruleLimitType(RuleLimitTypeVO.valueOf(ruleTreeNodeLine.getRuleLimitType()))
+                    .ruleLogicCheckTypeVO(RuleLogicCheckTypeVO.valueOf(ruleTreeNodeLine.getRuleLimitValue()))
+                    .build();
+
+            List<RuleTreeNodeLineVO> lineVoList = ruleTreeNodeLineMap.get(lineVO.getRuleNodeFrom());
+            if (lineVoList == null){
+                lineVoList = new ArrayList<>();
+                ruleTreeNodeLineMap.put(lineVO.getRuleNodeFrom(), lineVoList);
+            }
+            lineVoList.add(lineVO);
+        }
+
+
+        //2. 构建节点名称对应节点VOmap
+        Map<String, RuleTreeNodeVO> ruleTreeNodeMap = new HashMap<>();
+        for (RuleTreeNode ruleTreeNode : ruleTreeNodes) {
+            RuleTreeNodeVO treeNodeVO = RuleTreeNodeVO.builder()
+                    .ruleKey(ruleTreeNode.getRuleKey())
+                    .ruleDesc(ruleTreeNode.getRuleDesc())
+                    .ruleValue(ruleTreeNode.getRuleValue())
+                    .ruleTreeNodeLineVOList(ruleTreeNodeLineMap.get(ruleTreeNode.getRuleKey()))
+                    .build();
+
+            ruleTreeNodeMap.put(treeNodeVO.getRuleKey(), treeNodeVO);
+        }
+
+
+
+        //3. 完成ruleTreeVO 规则树总体构建
+        RuleTreeVO ruleTreeVO = new RuleTreeVO();
+        ruleTreeVO.setTreeId(treeId);
+        ruleTreeVO.setTreeName(ruleTree.getTreeName());
+        ruleTreeVO.setTreeDesc(ruleTree.getTreeDesc());
+        ruleTreeVO.setTreeRootRuleNode(ruleTree.getTreeRootRuleKey());
+        ruleTreeVO.setTreeNodeMap(ruleTreeNodeMap);
+
+        return ruleTreeVO;
+    }
+
+    @Override
+    public StrategyAwardRuleModelVO queryStrategyAwardRuleModel(Long strategyId, Integer awardId) {
+        StrategyAward strategyAward = new StrategyAward();
+        strategyAward.setAwardId(awardId);
+        strategyAward.setStrategyId(strategyId);
+        String ruleModels = strategyAwardDAO.queryRuleModel(strategyAward);
+        if (ruleModels == null){
+            return null;
+        }
+        return StrategyAwardRuleModelVO.builder()
+                .ruleModel(ruleModels)
+                .build();
     }
 }

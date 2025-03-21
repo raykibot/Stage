@@ -1,0 +1,47 @@
+package com.luo.domain.strategy.service.rule.tree.impl;
+
+import com.luo.domain.strategy.model.vo.RuleLogicCheckTypeVO;
+import com.luo.domain.strategy.repository.IStrategyRepository;
+import com.luo.domain.strategy.service.armory.IRaffleDispatch;
+import com.luo.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
+import com.luo.domain.strategy.service.rule.tree.ILogicTreeNode;
+import com.luo.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component("rule_stock")
+public class RuleStockTreeNode implements ILogicTreeNode {
+
+    @Autowired
+    private IStrategyRepository strategyRepository;
+
+    @Autowired
+    private IRaffleDispatch raffleDispatch;
+
+
+    @Override
+    public DefaultTreeFactory.TreeActionEntity logic(String userId, Long strategyId, Integer awardId, String ruleValue) {
+
+
+        Boolean status = raffleDispatch.subtractStock(strategyId,awardId);
+
+        if (status){
+            //写入延迟队列
+            log.info("库存扣减成功");
+            return DefaultTreeFactory.TreeActionEntity.builder()
+                    .strategyAwardVO(DefaultTreeFactory.StrategyAwardVO.builder()
+                            .awardId(awardId)
+                            .awardRuleValue(ruleValue)
+                            .build())
+                    .ruleLogicCheckTypeVO(RuleLogicCheckTypeVO.TAKE_OVER)
+                    .build();
+        }
+        //库存扣减失败
+        log.info("库存扣减失败");
+        return DefaultTreeFactory.TreeActionEntity.builder()
+                .ruleLogicCheckTypeVO(RuleLogicCheckTypeVO.ALLOW)
+                .build();
+    }
+}

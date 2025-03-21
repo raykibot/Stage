@@ -1,8 +1,65 @@
 package com.luo.domain.strategy.service.rule.chain.factory;
 
+import com.luo.domain.strategy.model.entity.StrategyEntity;
+import com.luo.domain.strategy.repository.IStrategyRepository;
+import com.luo.domain.strategy.service.rule.chain.ILogicChain;
 import lombok.*;
+import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
+
+@Service
 public class DefaultChainFactory {
+
+
+    private final Map<String, ILogicChain> chainGroups;
+
+    protected IStrategyRepository strategyRepository ;
+
+    public DefaultChainFactory(Map<String, ILogicChain> chainGroups, IStrategyRepository strategyRepository) {
+        this.chainGroups = chainGroups;
+        this.strategyRepository = strategyRepository;
+    }
+
+
+
+    public ILogicChain openChain(Long strategyId){
+
+        //获取该策略id所配置的过滤规则
+        StrategyEntity strategyEntity = strategyRepository.queryStrategyEntityByStrategyId(strategyId);
+        String [] ruleModels = strategyEntity.getRuleModels();
+
+        //未配置规则  装配默认规则
+        if (ruleModels.length == 0 || ruleModels == null){
+            return chainGroups.get(LogicModel.DEFAULT.getCode());
+        }
+
+        //获取头节点
+        ILogicChain iLogicChain = chainGroups.get(ruleModels[0]);
+
+        //这里的赋值操作是将 current 变量指向 logicChain 所指向的同一个对象（头节点），而不是创建一个新对象。
+        ILogicChain current = iLogicChain;
+        for (int i = 1; i < ruleModels.length; i++) {
+            ILogicChain next = chainGroups.get(ruleModels[i]);
+            current = current.appendNext(next);
+        }
+
+        //装配默认规则
+        current.appendNext(chainGroups.get(LogicModel.DEFAULT.getCode()));
+
+        //返回头节点
+        return iLogicChain;
+    }
+
+
+
+
+
+
+
+
+
 
 
     /**

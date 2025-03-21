@@ -33,4 +33,14 @@ public class RedisService implements IRedisService {
         RBucket<T> bucket = redissonClient.getBucket(key);
         return bucket.get();
     }
+
+    @Override
+    public long decr(String key) {
+        return redissonClient.getAtomicLong(key).decrementAndGet();
+    }
+
+    @Override
+    public Boolean setNx(String key) {
+        return redissonClient.getBucket(key).trySet("lock");
+    }
 }
