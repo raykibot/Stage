@@ -46,6 +46,7 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
 
         //获取处理好的rule_weight
         String ruleWeight = strategyEntity.getRuleWeight();
+        if (ruleWeight == null) return true;
         StrategyRuleEntity strategyRuleEntity = strategyRepository.queryStrategyRuleEntity(ruleWeight);
         Map<String, List<Integer>> ruleValueMap = strategyRuleEntity.getRuleValue();
 
@@ -56,15 +57,15 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
 
             for (Integer awardId : awardIdList) {
                 for (StrategyAwardEntity entity : list) {
-                    if (entity.getAwardId() == awardId){
+                    if (entity.getAwardId() == awardId) {
                         strategyAwardEntityList.add(entity);
                     }
                 }
             }
 
-            String caCheKey = String.valueOf(strategyId).concat(Commons.UNDERLINE)+key;
+            String caCheKey = String.valueOf(strategyId).concat(Commons.UNDERLINE) + key;
             //权重抽奖信息存储到redis中
-            defaultAssemble(strategyAwardEntityList,caCheKey);
+            defaultAssemble(strategyAwardEntityList, caCheKey);
         }
         return true;
     }
@@ -109,16 +110,15 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
         //4. 打乱奖品id
         Collections.shuffle(awardIds);
 
-
         //5. 存入redis
-        strategyRepository.setCacheAwardIds(strategyId, awardIds,awardIds.size());
+        strategyRepository.setCacheAwardIds(strategyId, awardIds, awardIds.size());
     }
 
     // 假如最小概率为 0.0001 则返回 10000
-    private int convert(double minAwardRate){
+    private int convert(double minAwardRate) {
         double current = minAwardRate;
         int power = 1;
-        while (current < 1){
+        while (current < 1) {
             current = current * 10;
             power = power * 10;
         }
@@ -126,13 +126,10 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
     }
 
 
-
-
-
     @Override
     public Integer getRandomAwardId(Long strategyId) {
         int rateRange = strategyRepository.getRateRange(strategyId);
-        return strategyRepository.getAwardRandom(new Random().nextInt(rateRange),strategyId);
+        return strategyRepository.getAwardRandom(new Random().nextInt(rateRange), strategyId);
     }
 
     @Override
@@ -148,7 +145,7 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
 
     @Override
     public Boolean subtractStock(Long strategyId, Integer awardId) {
-        String caCheKey = Commons.RedisKey.STRATEGY_AWARD_COUNT_KEY+strategyId+Commons.UNDERLINE+awardId;
+        String caCheKey = Commons.RedisKey.STRATEGY_AWARD_COUNT_KEY + strategyId + Commons.UNDERLINE + awardId;
         return strategyRepository.subtractStock(caCheKey);
     }
 }

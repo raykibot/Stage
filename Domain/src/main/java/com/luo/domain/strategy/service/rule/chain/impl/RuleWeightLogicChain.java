@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Slf4j
 @Component("rule_weight")
 public class RuleWeightLogicChain extends AbstractLogicChain {
 
@@ -28,6 +29,8 @@ public class RuleWeightLogicChain extends AbstractLogicChain {
 
         String value = strategyRepository.queryRuleValue(strategyId, ruleModel());
 
+        log.info("责任链校验-权重抽奖检查 userId:{} strategyId:{}", userId, strategyId);
+
         //处理权重抽奖范围值
         Map<Long,String> map = analyticalRuleValue(value);
 
@@ -40,13 +43,14 @@ public class RuleWeightLogicChain extends AbstractLogicChain {
 
         //积分区间不为空 执行权重抽奖
         if (scoreIndex != null){
+            log.info("责任链校验-权重抽奖接管 userId:{} strategyId:{} userScore:{} scoreIndex:{}", userId, strategyId, userScore, scoreIndex);
             Integer awardId = raffleDispatch.getRandomAwardId(strategyId, map.get(scoreIndex));
             return DefaultChainFactory.StrategyAwardVO.builder()
                     .awardId(awardId)
                     .ruleModel(ruleModel())
                     .build();
         }
-
+        log.info("责任链校验-权重抽奖放行 userId:{} strategyId:{}", userId, strategyId);
         return next().logic(userId,strategyId);
     }
 

@@ -4,12 +4,12 @@ package com.luo.infrastructure.redis;
 
 
 
-import org.redisson.api.RBucket;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 
 @Service
 public class RedisService implements IRedisService {
@@ -42,5 +42,15 @@ public class RedisService implements IRedisService {
     @Override
     public Boolean setNx(String key) {
         return redissonClient.getBucket(key).trySet("lock");
+    }
+
+    @Override
+    public <T> RBlockingQueue<T> getBlockingDeque(String key) {
+        return redissonClient.getBlockingQueue(key);
+    }
+
+    @Override
+    public <T> RDelayedQueue<T> getDelayedQueue(RBlockingQueue<T> blockingQueue) {
+        return redissonClient.getDelayedQueue(blockingQueue);
     }
 }

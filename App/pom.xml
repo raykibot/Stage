@@ -4,13 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.luo.infrastructure</groupId>
+        <groupId>com.luo</groupId>
         <artifactId>Four_market</artifactId>
         <version>1.0</version>
     </parent>
 
     <groupId>com.luo</groupId>
     <artifactId>App</artifactId>
+    <version>1.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -43,6 +44,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+<!--        Junit-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 
         <!--模块依赖-->
@@ -54,6 +61,11 @@
         <dependency>
             <groupId>com.luo.domain</groupId>
             <artifactId>Domain</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.luo.trigger</groupId>
+            <artifactId>Trigger</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.luo.infrastructure.dao.IStrategyAwardDAO">
+    <update id="updateStrategyAwardStock">
+        update strategy_award
+        set award_count_surplus = award_count_surplus - 1
+        where strategy_id = #{strategyId} and award_id = #{awardId}
+    </update>
 
     <select id="queryStrategyAwardList" resultType="com.luo.infrastructure.pojo.StrategyAward">
         select strategy_id,
@@ -11,7 +16,7 @@
                award_count_surplus,
                award_rate,
                sort
-        from strategy_award;
+        from strategy_award where strategy_id = #{strategyId};
     </select>
     <select id="queryStrategyAward" resultType="com.luo.infrastructure.pojo.StrategyAward">
         select strategy_id,

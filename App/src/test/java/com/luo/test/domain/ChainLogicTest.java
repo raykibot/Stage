@@ -37,18 +37,15 @@ public class ChainLogicTest {
     @Test
     public void chainTest(){
 
-        ReflectionTestUtils.setField(ruleWeightLogicChain,"userScore",1200L);
+        ReflectionTestUtils.setField(ruleWeightLogicChain,"userScore",400L);
 
         ILogicChain iLogicChain = defaultChainFactory.openChain(100001L);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 3; i++) {
             DefaultChainFactory.StrategyAwardVO awardVO = iLogicChain.logic("user", 100001L);
             log.info("返回奖品id:{}",awardVO.getAwardId());
         }
     }
-
-
-
 
 
 }

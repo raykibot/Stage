@@ -5,6 +5,7 @@ import com.luo.domain.strategy.model.entity.StrategyAwardRuleModelVO;
 import com.luo.domain.strategy.model.entity.StrategyEntity;
 import com.luo.domain.strategy.model.entity.StrategyRuleEntity;
 import com.luo.domain.strategy.model.vo.RuleTreeVO;
+import com.luo.domain.strategy.model.vo.StrategyAwardStockVO;
 
 import java.util.List;
 
@@ -44,4 +45,10 @@ public interface IStrategyRepository {
     RuleTreeVO queryRuleTreeVOByTreeId(String treeId);
 
     StrategyAwardRuleModelVO queryStrategyAwardRuleModel(Long strategyId, Integer awardId);
+
+    void awardStockConsumeSendQueue(StrategyAwardStockVO build);
+
+    StrategyAwardStockVO takeQueueValue();
+
+    void updateStrategyAwardStock(Long strategyId, Integer awardId);
 }

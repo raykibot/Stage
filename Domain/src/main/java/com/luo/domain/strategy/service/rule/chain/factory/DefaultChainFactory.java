@@ -31,7 +31,7 @@ public class DefaultChainFactory {
         String [] ruleModels = strategyEntity.getRuleModels();
 
         //未配置规则  装配默认规则
-        if (ruleModels.length == 0 || ruleModels == null){
+        if (null == ruleModels || ruleModels.length == 0){
             return chainGroups.get(LogicModel.DEFAULT.getCode());
         }
 

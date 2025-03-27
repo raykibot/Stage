@@ -20,21 +20,25 @@ public class RuleLockTreeNode implements ILogicTreeNode {
     private IStrategyRepository strategyRepository;
 
     //用户抽奖次数
-    private Long userRaffleCount = 1L;
+    private Long userRaffleCount = 0L;
 
 
     @Override
     public DefaultTreeFactory.TreeActionEntity logic(String userId, Long strategyId, Integer awardId, String ruleValue) {
 
+        log.info("规则树校验-次数锁");
+
         long raffleCount = Long.parseLong(ruleValue);
 
         //用户抽奖次数达到解锁条件 放行
         if (userRaffleCount >= raffleCount){
+            log.info("规则树校验-次数锁放行");
             return DefaultTreeFactory.TreeActionEntity.builder()
                     .ruleLogicCheckTypeVO(RuleLogicCheckTypeVO.ALLOW)
                     .build();
         }
 
+        log.info("规则树校验-次数锁接管");
         //用户未达到抽奖条件 拦截
         return DefaultTreeFactory.TreeActionEntity.builder()
                 .ruleLogicCheckTypeVO(RuleLogicCheckTypeVO.TAKE_OVER)

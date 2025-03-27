@@ -5,14 +5,17 @@ import com.luo.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import com.luo.domain.strategy.service.rule.tree.ILogicTreeNode;
 import com.luo.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
 import com.luo.type.constants.Commons;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component("rule_luck_award")
+@Slf4j
 public class RuleLuckAwardTreeNode implements ILogicTreeNode {
     @Override
     public DefaultTreeFactory.TreeActionEntity logic(String userId, Long strategyId, Integer awardId, String ruleValue) {
 
 
+        log.info("规则树校验-兜底返回奖品");
         String[] split1 = ruleValue.split(Commons.COLON);
 
 

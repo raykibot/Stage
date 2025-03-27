@@ -23,7 +23,7 @@ public class ApiTests {
 
     @Test
     public void assembleTest(){
-        log.info("装配：{}",assembleArmory.assembleRaffleStrategy(100001L));
+        log.info("装配：{}",assembleArmory.assembleRaffleStrategy(100006L));
     }
 
     @Test

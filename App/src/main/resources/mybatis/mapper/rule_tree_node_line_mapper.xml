@@ -5,12 +5,7 @@
 <mapper namespace="com.luo.infrastructure.dao.IRuleTreeNodeLineDAO">
 
     <select id="queryRuleTreeNodeLineVOByTreeId" resultType="com.luo.infrastructure.pojo.RuleTreeNodeLine">
-        select
-        tree_id
-        rule_node_from,
-        rule_node_to,
-        rule_limit_type,
-        rule_limit_value from rule_tree_node_line
-        where tree_id = #{treeId}
+        select id,tree_id,rule_node_from,rule_node_to,rule_limit_type,rule_limit_value,create_time,update_time
+        from rule_tree_node_line where tree_id = #{treeId}
     </select>
 </mapper>

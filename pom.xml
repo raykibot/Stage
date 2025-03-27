@@ -4,10 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.luo.infrastructure</groupId>
+    <groupId>com.luo</groupId>
     <artifactId>Four_market</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>App</module>
         <module>Type</module>
@@ -70,6 +71,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.9</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>2.0.28</version>
             </dependency>
         </dependencies>
 

@@ -9,6 +9,7 @@ import com.luo.domain.strategy.service.rule.chain.ILogicChain;
 import com.luo.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import com.luo.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 
 public abstract class AbstractRaffleStrategy implements IRaffleStrategy{
@@ -42,7 +43,7 @@ public abstract class AbstractRaffleStrategy implements IRaffleStrategy{
         //2. 责任链抽奖计算
         DefaultChainFactory.StrategyAwardVO chainAwardVO = raffleLogicChain(userId, strategyId);
         //权重和黑名单直接返回 不用进入规则树  默认抽奖需要进入后续流程
-        if (chainAwardVO.getRuleModel().equals(DefaultChainFactory.LogicModel.DEFAULT.getCode())){
+        if (!chainAwardVO.getRuleModel().equals(DefaultChainFactory.LogicModel.DEFAULT.getCode())){
             return buildRaffleAwardEntity(chainAwardVO.getAwardId(), strategyId);
         }
 
