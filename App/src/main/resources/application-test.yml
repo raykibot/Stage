@@ -1,0 +1,32 @@
+server:
+  port: 9191
+
+  app:
+    config:
+      # 接口版本
+      api-version: v1
+      # 跨域，开发阶段可以设置为 * 不限制
+      cross-origin: '*'
+
+
+  spring:
+    #  数据库连接信息
+    datasource:
+      username: ${SPRING_DATASOURCE_USERNAME:root}
+      password: ${SPRING_DATASOURCE_PASSWORD:690501LJK}
+      driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+      url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/market?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC}
+
+    # redis连接信息 默认没有配置密码
+    redis:
+      port: ${SPRING_REDIS_PORT:6379}
+      host: ${SPRING_REDIS_HOST:redis}
+
+  # myabtis配置
+  mybatis:
+    #扫描Mapper.xml文件 sql文件所在处
+    mapper-locations: classpath:/mybatis/mapper/*.xml
+    #  config-location: classpath:/mybatis-config
+    #开启驼峰命名
+    configuration:
+      map-underscore-to-camel-case: true

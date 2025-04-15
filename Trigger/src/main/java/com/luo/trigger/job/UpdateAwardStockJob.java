@@ -18,7 +18,7 @@ public class UpdateAwardStockJob {
     @Resource
     private IRaffleStock raffleStock;
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    //@Scheduled(cron = "0/5 * * * * ?")
     public void updateAwardStock() {
         try {
             log.info("定时任务 从延迟队列中获取奖品数据");

@@ -31,8 +31,14 @@ public class RuleStockTreeNode implements ILogicTreeNode {
 
         if (status){
 
-            //写入延迟队列
-            strategyRepository.awardStockConsumeSendQueue(StrategyAwardStockVO.builder()
+//            //写入延迟队列 使用redis自带的延迟队列实现
+//            strategyRepository.awardStockConsumeSendQueue(StrategyAwardStockVO.builder()
+//                    .awardId(awardId)
+//                    .strategyId(strategyId)
+//                    .build());
+
+            //接入rabbitmq实现
+            strategyRepository.awardStockProducerWithRabbitmq(StrategyAwardStockVO.builder()
                     .awardId(awardId)
                     .strategyId(strategyId)
                     .build());

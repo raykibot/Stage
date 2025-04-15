@@ -14,6 +14,7 @@ import com.luo.type.constants.Commons;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -41,10 +42,13 @@ public class StrategyRepository implements IStrategyRepository {
     private IRuleTreeDAO ruleTreeDAO;
 
     @Autowired
-    IRuleTreeNodeDAO ruleTreeNodeDAO;
+    private IRuleTreeNodeDAO ruleTreeNodeDAO;
 
     @Autowired
     private IRuleTreeNodeLineDAO ruleTreeNodeLineDAO;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
     @Override
@@ -299,5 +303,10 @@ public class StrategyRepository implements IStrategyRepository {
         strategyAward.setAwardId(awardId);
         strategyAward.setStrategyId(strategyId);
         strategyAwardDAO.updateStrategyAwardStock(strategyAward);
+    }
+
+    @Override
+    public void awardStockProducerWithRabbitmq(StrategyAwardStockVO build) {
+        rabbitTemplate.convertAndSend(Commons.DELAY_EXCHANGE,Commons.DELAY_ROUTING_KEY,build);
     }
 }
