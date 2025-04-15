@@ -2,4 +2,4 @@ spring:
   config:
     name: market_app
   profiles:
-    active: dev
+    active: test

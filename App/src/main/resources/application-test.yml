@@ -1,7 +1,7 @@
 server:
   port: 9191
 
-  app:
+app:
     config:
       # 接口版本
       api-version: v1
@@ -9,7 +9,7 @@ server:
       cross-origin: '*'
 
 
-  spring:
+spring:
     #  数据库连接信息
     datasource:
       username: ${SPRING_DATASOURCE_USERNAME:root}
@@ -22,8 +22,16 @@ server:
       port: ${SPRING_REDIS_PORT:6379}
       host: ${SPRING_REDIS_HOST:redis}
 
+
+    # rabbitmq配置
+    rabbitmq:
+        username: ${SPRING_RABBITMQ_USERNAME:guest}
+        password: ${SPRING_RABBITMQ_PASSWORD:guest}
+        port: ${SPRING_RABBITMQ_PORT:5672}
+        host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+
   # myabtis配置
-  mybatis:
+mybatis:
     #扫描Mapper.xml文件 sql文件所在处
     mapper-locations: classpath:/mybatis/mapper/*.xml
     #  config-location: classpath:/mybatis-config

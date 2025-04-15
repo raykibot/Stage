@@ -9,10 +9,35 @@
 #      - lottery-network
 
 
-version: '3.8'
+#version: '3.8'
 
 services:
 
+
+  backend:
+    image: backend
+    container_name: backend
+    ports:
+      - "9191:9191"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/market?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 690501LJK
+      SPRING_REDIS_HOST: redis
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - lottery-network
+
+  front:
+    image: front
+    container_name: front
+    ports:
+      - "8080:80"
+    restart: always
+    networks:
+      - lottery-network
 
 
   # Redis 服务
@@ -51,20 +76,21 @@ services:
     networks:
       - lottery-network
 
-#  mysql:
-#    image: mysql
-#    container_name: mysql
-#    restart: always
-#    ports:
-#      - "3307:3306"
-#    volumes:
-#      - mysql_data:/var/lib/mysql
-#      - ../mysql/market4.sql:/docker-entrypoint-initdb.d/market4.sql  # 挂载 SQL 脚本到容器初始化目录
-#    networks:
-#      - lottery-network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../mysql/market4.sql:/docker-entrypoint-initdb.d/market4.sql  # 挂载 SQL 脚本到容器初始化目录
+    networks:
+      - lottery-network
 
-#volumes:
-#  mysql_data:
+volumes:
+  mysql_data:
+  redis_data:
 
 # 自定义网络（提升容器间通信效率）
 networks:

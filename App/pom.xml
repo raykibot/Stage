@@ -80,4 +80,17 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.12</version>
+                <configuration>
+                    <mainClass>com.luo.Application</mainClass> <!--  指定启动类全限定名 -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
