@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RaffleAwardListRequestDTO {
 
-    private Long strategyId;
+    private String userId;
+
+    private Long activityId;
 
 }

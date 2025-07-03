@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IRaffleActivityAccountDAO">
+
+
+    <insert id="insert">
+        insert into raffle_activity_account
+        (user_id,activity_id,total_count,total_count_surplus,month_count,month_count_surplus,day_count,day_count_surplus,create_time,update_time)
+        values
+        (#{userId},#{activityId},#{totalCount},#{totalCountSurplus},#{monthCount},#{monthCountSurplus},#{dayCount},#{dayCountSurplus},now(),now())
+    </insert>
+
+    <update id="updateAccount">
+        update raffle_activity_account
+        set
+        total_count = total_count + #{totalCount},
+        total_count_surplus = total_count_surplus + #{totalCountSurplus},
+        month_count = month_count + #{monthCount},
+        month_count_surplus = month_count_surplus + #{monthCountSurplus},
+        day_count = day_count + #{dayCount},
+        day_count_surplus = day_count_surplus + #{dayCountSurplus}
+        where user_id = #{userId} and activity_id = #{activityId}
+    </update>
+    <update id="updateRaffleActivityAccount">
+        update raffle_activity_account
+        set total_count_surplus = total_count_surplus - 1, update_time = now()
+        where user_id = #{userId} and activity_id = #{activityId} and total_count_surplus > 0
+    </update>
+    <update id="updateAccountMonthCountSurplus">
+        update raffle_activity_account
+        set month_count_surplus = month_count_surplus - 1, update_time = now()
+        where user_id = #{userId} and activity_id = #{activityId} and month_count_surplus > 0
+    </update>
+    <update id="updateAccountMonthCountSurplusImage">
+        update raffle_activity_account
+        set month_count_surplus = #{monthCountSurplus} - 1, update_time = now()
+        where user_id = #{userId} and activity_id = #{activityId}
+    </update>
+    <update id="updateAccountDayCountSurplusImage">
+        update raffle_activity_account
+        set day_count_surplus = day_count_surplus - 1, update_time = now()
+        where user_id = #{userId} and activity_id = #{activityId} and day_count_surplus > 0
+    </update>
+    <select id="queryRaffleActivityAccount" resultType="com.luo.infrastructure.pojo.RaffleActivityAccount">
+        select user_id,activity_id,total_count,total_count_surplus,month_count,month_count_surplus,day_count,day_count_surplus,create_time,update_time from raffle_activity_account where user_id = #{userId} and activity_id = #{activityId}
+    </select>
+</mapper>

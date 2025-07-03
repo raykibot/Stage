@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.luo</groupId>
-    <artifactId>Four_market</artifactId>
+    <artifactId>Stage</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
@@ -31,6 +31,7 @@
         <version>2.7.12</version>
     </parent>
 
+
     <!--项目所有依赖-->
     <dependencyManagement>
         <!--  mysql连接数据库驱动-->
@@ -49,8 +50,8 @@
 
             <!--序列化器-->
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
                 <version>2.0.28</version>
             </dependency>
 
@@ -68,24 +69,29 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>2.7.12</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.9</version>
             </dependency>
 
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>2.0.28</version>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+                <version>5.2.1</version>
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-amqp</artifactId>
-                <version>3.4.4</version>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.33</version>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
 
 <!--        <build>-->

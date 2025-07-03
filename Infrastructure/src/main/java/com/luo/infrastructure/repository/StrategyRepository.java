@@ -50,6 +50,9 @@ public class StrategyRepository implements IStrategyRepository {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private IRaffleActivityDAO raffleActivityDAO;
+
 
     @Override
     public void setCacheAwardIds(String strategyId, List<Integer> awardIds, int size) {
@@ -91,6 +94,7 @@ public class StrategyRepository implements IStrategyRepository {
                     .awardCountSurplus(strategyAward.getAwardCountSurplus())
                     .awardRate(strategyAward.getAwardRate())
                     .sort(strategyAward.getSort())
+                    .ruleModels(strategyAward.getRuleModels())
                     .build();
             strategyAwardEntityList.add(build);
         }
@@ -308,5 +312,31 @@ public class StrategyRepository implements IStrategyRepository {
     @Override
     public void awardStockProducerWithRabbitmq(StrategyAwardStockVO build) {
         rabbitTemplate.convertAndSend(Commons.DELAY_EXCHANGE,Commons.DELAY_ROUTING_KEY,build);
+    }
+
+    @Override
+    public Long queryActivityIdByStrategyId(Long activityId) {
+        return raffleActivityDAO.queryStrategyIdByActivityId(activityId);
+    }
+
+    @Override
+    public Map<String, Integer> queryRuleLockCount(String[] treeIds) {
+
+        if (treeIds == null || treeIds.length == 0){
+            return new HashMap<String, Integer>();
+        }
+        List<RuleTreeNode> list = ruleTreeNodeDAO.queryRuleLockCount(treeIds);
+        Map<String, Integer> map = new HashMap<>();
+        for (RuleTreeNode ruleTreeNode : list) {
+            String key = ruleTreeNode.getTreeId();
+            Integer value = Integer.valueOf(ruleTreeNode.getRuleValue());
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    @Override
+    public Long queryStrategyIdByActivityId(Long activityId) {
+        return raffleActivityDAO.queryStrategyIdByActivityId(activityId);
     }
 }

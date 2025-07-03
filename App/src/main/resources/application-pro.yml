@@ -1,0 +1,108 @@
+server:
+  port: 9191
+
+app:
+  config:
+    api-version: v1
+    cross-origin: '*'
+
+spring:
+  shardingsphere:
+    mode:
+      type: Standalone
+    datasource:
+      names: main_ds, ds0, ds1
+
+      main_ds:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: ${SPRING_DATASOURCE_URL_MAIN}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: ${SPRING_DATASOURCE_URL_DS0}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: ${SPRING_DATASOURCE_URL_DS1}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+
+    rules:
+      sharding:
+        default-data-source-name: main_ds
+        default-database-strategy:
+          standard:
+            sharding-column: user_id
+            sharding-algorithm-name: db-hash-mod
+
+        tables:
+          raffle_activity_order:
+            actual-data-nodes: ds$->{0..1}.raffle_activity_order_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+
+          user_award_record:
+            actual-data-nodes: ds$->{0..1}.user_award_record_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+
+          user_raffle_order:
+            actual-data-nodes: ds$->{0..1}.user_raffle_order_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+
+          user_behavior_rebate_order:
+            actual-data-nodes: ds$->{0..1}.user_behavior_rebate_order_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+
+        sharding-algorithms:
+          db-hash-mod:
+            type: HASH_MOD
+            props:
+              sharding-count: 2
+
+          table-hash-mod:
+            type: HASH_MOD
+            props:
+              sharding-count: 4
+
+    props:
+      sql-show: true
+
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        prefetch: 1
+    topic:
+      activity_sku_stock_zero: activity_sku_stock_zero
+      send_award: send_award
+      send_rebate: send_rebate
+
+mybatis:
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

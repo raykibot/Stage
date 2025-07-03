@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IRaffleActivityOrderDAO">
+
+    <insert id="insert">
+        insert into raffle_activity_order
+        (user_id,sku,activity_id,activity_name,strategy_id,order_id,order_time,total_count,day_count,month_count,state,out_business_no,create_time,update_time)
+        values
+        (#{userId},#{sku},#{activityId},#{activityName},#{strategyId},#{orderId},#{orderTime},#{totalCount},#{dayCount},#{monthCount},#{state},#{outBusinessNo},now(),now())
+    </insert>
+</mapper>

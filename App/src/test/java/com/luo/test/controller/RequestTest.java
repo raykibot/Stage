@@ -1,7 +1,5 @@
 package com.luo.test.controller;
 
-import com.luo.domain.strategy.service.armory.IAssembleArmory;
-import com.luo.domain.strategy.service.rule.IRaffleStrategy;
 import com.luo.trigger.api.IRaffleService;
 import com.luo.type.model.Response;
 import lombok.extern.slf4j.Slf4j;

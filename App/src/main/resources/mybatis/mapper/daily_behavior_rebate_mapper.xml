@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IDailyBehaviorRebateDAO">
+
+    <select id="queryDailyRebateConfig" resultType="com.luo.infrastructure.pojo.DailyBehaviorRebate">
+        select behavior_type,rebate_desc,rebate_type,rebate_config,state from daily_behavior_rebate where state = 'open'
+    </select>
+</mapper>

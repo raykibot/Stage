@@ -8,6 +8,7 @@ import com.luo.domain.strategy.model.vo.RuleTreeVO;
 import com.luo.domain.strategy.model.vo.StrategyAwardStockVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IStrategyRepository {
     void setCacheAwardIds(String strategyId, List<Integer> awardIds, int size);
@@ -53,4 +54,10 @@ public interface IStrategyRepository {
     void updateStrategyAwardStock(Long strategyId, Integer awardId);
 
     void awardStockProducerWithRabbitmq(StrategyAwardStockVO build);
+
+    Long queryActivityIdByStrategyId(Long activityId);
+
+    Map<String, Integer> queryRuleLockCount(String[] treeIds);
+
+    Long queryStrategyIdByActivityId(Long activityId);
 }

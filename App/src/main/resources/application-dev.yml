@@ -1,42 +1,106 @@
 server:
   port: 9191
 
-
 app:
   config:
-    # 接口版本
     api-version: v1
-    # 跨域，开发阶段可以设置为 * 不限制
     cross-origin: '*'
 
-
 spring:
-#  数据库连接信息
-  datasource:
-    username: root
-    password: 690501LJK
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/market?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+  shardingsphere:
+    mode:
+      type: Standalone
+    datasource:
+      names: main_ds, ds0, ds1
+      main_ds:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: ${SPRING_DATASOURCE_URL_MAIN}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: ${SPRING_DATASOURCE_URL_DS0}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: ${SPRING_DATASOURCE_URL_DS1}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
 
-# redis连接信息 默认没有配置密码
+    rules:
+      sharding:
+        # 默认数据源（非分片表走主库）
+        default-data-source-name: main_ds
+        # 分库策略
+        default-database-strategy:
+          standard:
+            sharding-column: user_id  # 分库键
+            sharding-algorithm-name: db-hash-mod  # 分库算法
+        # 分表规则（逻辑表 user_）
+        tables:
+          raffle_activity_order: # 逻辑表名（代码中操作的表名）
+            actual-data-nodes: ds$->{0..1}.raffle_activity_order_$->{0..3} # 物理表名模式（ds01.user_01, ds01.user_02, ds02.user_01, ds02.user_02）
+            table-strategy:
+              standard:
+                sharding-column: user_id  # 分表键
+                sharding-algorithm-name: table-hash-mod  # 分表算法
+          user_award_record:
+            actual-data-nodes: ds$->{0..1}.user_award_record_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+          user_raffle_order:
+            actual-data-nodes: ds$->{0..1}.user_raffle_order_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+          user_behavior_rebate_order:
+            actual-data-nodes: ds$->{0..1}.user_behavior_rebate_order_$->{0..3}
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: table-hash-mod
+
+        # 分片算法定义
+        sharding-algorithms:
+          # 分库算法：根据 user_id 哈希取模分到 ds01/ds02
+          db-hash-mod:
+            type: HASH_MOD
+            props:
+              sharding-count: 2  # 分库数量（2 个库）
+           #分表算法：根据 user_id 哈希取模分到 user_01/user_02
+          table-hash-mod:
+            type: HASH_MOD
+            props:
+              sharding-count: 4  # 分表数量（每库 2 张表）
+
+    props:
+      sql-show: true  # 打印实际路由的SQL
+
   redis:
+    host: redis
     port: 6379
-    host: localhost
 
-# rabbitmq配置
   rabbitmq:
+    host: rabbitmq
+    port: 5672
     username: guest
     password: guest
-    port: 5672
-    host: localhost
+    listener:
+      simple:
+        prefetch: 1
+    topic:
+      activity_sku_stock_zero: activity_sku_stock_zero
+      send_award: send_award
+      send_rebate: send_rebate
 
-# myabtis配置
 mybatis:
-  #扫描Mapper.xml文件 sql文件所在处
   mapper-locations: classpath:/mybatis/mapper/*.xml
-#  config-location: classpath:/mybatis-config
-  #开启驼峰命名
   configuration:
     map-underscore-to-camel-case: true
-
-

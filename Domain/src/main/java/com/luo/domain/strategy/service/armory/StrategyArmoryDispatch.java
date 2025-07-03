@@ -33,7 +33,7 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
             Integer awardId = strategyAwardEntity.getAwardId();
             // 奖品库存
             Integer awardCount = strategyAwardEntity.getAwardCount();
-            // 缓存奖品库存
+            // 缓存奖品库存    strategy_award_count_key_100006_101
             setCacheAwardCount(awardId, awardCount, strategyId);
         }
 
@@ -68,6 +68,12 @@ public class StrategyArmoryDispatch implements IAssembleArmory, IRaffleDispatch 
             defaultAssemble(strategyAwardEntityList, caCheKey);
         }
         return true;
+    }
+
+    @Override
+    public void strategyAssembleByActivityId(Long activityId) {
+        Long strategyId = strategyRepository.queryStrategyIdByActivityId(activityId);
+        assembleRaffleStrategy(strategyId);
     }
 
 

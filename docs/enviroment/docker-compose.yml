@@ -14,30 +14,30 @@
 services:
 
 
-  backend:
-    image: rayluo1/backend:1.0
-    container_name: backend
-    ports:
-      - "9191:9191"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/market?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 690501LJK
-      SPRING_REDIS_HOST: redis
-    depends_on:
-      - mysql
-      - redis
-    networks:
-      - lottery-network
-
-  front:
-    image: rayluo1/front:1.0
-    container_name: front
-    ports:
-      - "8080:80"
-    restart: always
-    networks:
-      - lottery-network
+#  backend:
+#    image: rayluo1/backend:1.0
+#    container_name: backend
+#    ports:
+#      - "9191:9191"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/market?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: 690501LJK
+#      SPRING_REDIS_HOST: redis
+#    depends_on:
+#      - mysql
+#      - redis
+#    networks:
+#      - lottery-network
+#
+#  front:
+#    image: rayluo1/front:1.0
+#    container_name: front
+#    ports:
+#      - "8080:80"
+#    restart: always
+#    networks:
+#      - lottery-network
 
 
   # Redis 服务
@@ -89,7 +89,7 @@ services:
       - lottery-network
 
 volumes:
-  mysql_data:
+#  mysql_data:
   redis_data:
 
 # 自定义网络（提升容器间通信效率）

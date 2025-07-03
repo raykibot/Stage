@@ -5,7 +5,6 @@ import com.luo.domain.strategy.service.rule.chain.ILogicChain;
 import com.luo.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import com.luo.domain.strategy.service.rule.chain.impl.RuleWeightLogicChain;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.javassist.tools.reflect.Reflection;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

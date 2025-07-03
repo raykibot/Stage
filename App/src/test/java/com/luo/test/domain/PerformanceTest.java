@@ -3,8 +3,7 @@ package com.luo.test.domain;
 import com.luo.domain.strategy.model.entity.RaffleAwardEntity;
 import com.luo.domain.strategy.model.entity.RaffleFactorEntity;
 import com.luo.domain.strategy.service.armory.IAssembleArmory;
-import com.luo.domain.strategy.service.armory.IRaffleDispatch;
-import com.luo.domain.strategy.service.rule.IRaffleStrategy;
+import com.luo.domain.strategy.service.IRaffleStrategy;
 import com.luo.domain.strategy.service.rule.chain.impl.RuleWeightLogicChain;
 import com.luo.domain.strategy.service.rule.tree.impl.RuleLockTreeNode;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.annotation.Resource;
 

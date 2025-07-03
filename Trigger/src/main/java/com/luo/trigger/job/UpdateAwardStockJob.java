@@ -2,10 +2,9 @@ package com.luo.trigger.job;
 
 import com.luo.domain.strategy.model.vo.StrategyAwardStockVO;
 
-import com.luo.domain.strategy.service.rule.IRaffleStock;
+import com.luo.domain.strategy.service.IRaffleStock;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

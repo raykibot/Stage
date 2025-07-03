@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.infrastructure.dao.IUserRaffleOrderDAO">
+    <insert id="insert">
+        insert into user_raffle_order
+        (user_id,activity_id,strategy_id,activity_name,order_id,order_time,order_state,create_time,update_time)
+        values
+        (#{userId},#{activityId},#{strategyId},#{activityName},#{orderId},#{orderTime},#{orderState},now(),now())
+    </insert>
+
+    <update id="updateUserRaffleOrder">
+        update user_raffle_order
+        set order_state = 'used', update_time = now()
+        where order_id = #{orderId} and user_id = #{userId} and order_state = 'create'
+    </update>
+    <select id="queryNoUsedRaffleOrder" resultType="com.luo.infrastructure.pojo.UserRaffleOrder">
+        select user_id, activity_id, strategy_id, activity_name, order_id, order_time, order_state, create_time, update_time from user_raffle_order
+        where user_id = #{userId} and activity_id = #{activityId} and order_state = 'create'
+    </select>
+</mapper>

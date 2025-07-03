@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface IRuleTreeNodeDAO {
     List<RuleTreeNode> queryRuleTreeNodeVOByTreeId(String treeId);
+
+    List<RuleTreeNode> queryRuleLockCount(String[] treeIds);
 }

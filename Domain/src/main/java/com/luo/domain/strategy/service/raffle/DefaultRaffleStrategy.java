@@ -5,20 +5,23 @@ import com.luo.domain.strategy.model.entity.StrategyAwardRuleModelVO;
 import com.luo.domain.strategy.model.vo.RuleTreeVO;
 import com.luo.domain.strategy.model.vo.StrategyAwardStockVO;
 import com.luo.domain.strategy.repository.IStrategyRepository;
+import com.luo.domain.strategy.service.IRaffleRule;
 import com.luo.domain.strategy.service.armory.IRaffleDispatch;
-import com.luo.domain.strategy.service.rule.AbstractRaffleStrategy;
-import com.luo.domain.strategy.service.rule.IRaffleAward;
-import com.luo.domain.strategy.service.rule.IRaffleStock;
+import com.luo.domain.strategy.service.AbstractRaffleStrategy;
+import com.luo.domain.strategy.service.IRaffleAward;
+import com.luo.domain.strategy.service.IRaffleStock;
 import com.luo.domain.strategy.service.rule.chain.ILogicChain;
 import com.luo.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import com.luo.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
 import com.luo.domain.strategy.service.rule.tree.factory.engine.IDecisionTreeEngine;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
-public class DefaultRaffleStrategy extends AbstractRaffleStrategy implements IRaffleStock, IRaffleAward {
+public class DefaultRaffleStrategy extends AbstractRaffleStrategy implements IRaffleStock, IRaffleAward, IRaffleRule {
 
 
     public DefaultRaffleStrategy(IStrategyRepository strategyRepository, IRaffleDispatch raffleDispatch, DefaultChainFactory defaultChainFactory, DefaultTreeFactory defaultTreeFactory) {
@@ -70,7 +73,17 @@ public class DefaultRaffleStrategy extends AbstractRaffleStrategy implements IRa
 
     @Override
     public List<StrategyAwardEntity> queryRaffleStaregyAwardList(Long strategyId) {
-        List<StrategyAwardEntity> strategyAwardEntities = strategyRepository.queryStrategyAwardList(strategyId);
-        return strategyAwardEntities;
+        return strategyRepository.queryStrategyAwardList(strategyId);
+    }
+
+    @Override
+    public List<StrategyAwardEntity> queryRaffleStrategyAwardListByActivityId(Long activityId) {
+       Long strategyId = strategyRepository.queryActivityIdByStrategyId(activityId);
+       return queryRaffleStaregyAwardList(strategyId);
+    }
+
+    @Override
+    public Map<String, Integer> queryRuleLockCount(String[] treeIds) {
+        return strategyRepository.queryRuleLockCount(treeIds);
     }
 }

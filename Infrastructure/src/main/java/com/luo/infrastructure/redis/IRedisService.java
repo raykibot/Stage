@@ -4,6 +4,8 @@ import org.redisson.api.RBlockingDeque;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 
+import java.util.concurrent.TimeUnit;
+
 public interface IRedisService {
 
 
@@ -15,6 +17,16 @@ public interface IRedisService {
      */
     void setActomicLongValue(String key, long value);
 
+
+    boolean isExists(String key);
+
+
+    /**
+     * 原子性 数字
+     * @param key
+     * @param value
+     */
+    void setAtomicLong(String key, long value);
 
     /**
      * 设置值 直接存储
@@ -35,6 +47,13 @@ public interface IRedisService {
      */
     <T> T getValue(String key);
 
+    /**
+     * 获取原子性数字
+     * @param key
+     * @return
+     */
+    Long getAtomicLong(String key );
+
 
     /**
      * 减少值
@@ -52,6 +71,8 @@ public interface IRedisService {
      * @return
      */
     Boolean setNx(String key);
+
+    Boolean setNx(String key, long time, TimeUnit timeUnit);
 
 
     /**
